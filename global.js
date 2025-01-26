@@ -4,16 +4,51 @@ function $$(selector, context = document) {
   return Array.from(context.querySelectorAll(selector));
 }
 
-const navLinks = $$("nav a");
+// const navLinks = $$("nav a");
 
-const currentLink = navLinks.find(
-  (a) => a.host === location.host && a.pathname === location.pathname
-);
+// const currentLink = navLinks.find(
+//   (a) => a.host === location.host && a.pathname === location.pathname
+// );
 
-if (currentLink) {
-  currentLink.classList.add("current");
+// if (currentLink) {
+//   currentLink.classList.add("current");
+// }
+
+let pages = [
+  { url: '', title: 'Home' },
+  { url: 'projects/', title: 'Projects' },
+  { url: 'Resume/', title: 'Resume' },
+  { url: 'contact/', title: 'Contact' },
+  { url: 'https://github.com/NGLYRY', title: 'Github' },
+];
+
+// Detect if we are on the home page using a class in the <html> element
+const ARE_WE_HOME = document.documentElement.classList.contains('home');
+
+// Create the <nav> element and prepend it to the <body>
+let nav = document.createElement('nav');
+document.body.prepend(nav);
+
+// Add links dynamically to the navigation menu
+for (let p of pages) {
+  let url = p.url;
+  let title = p.title;
+
+  // Adjust URL for relative paths if we're not on the home page
+  url = !ARE_WE_HOME && !url.startsWith('http') ? '../' + url : url;
+
+  // Create link and add it to <nav>
+  let a = document.createElement('a');
+  a.href = url;
+  a.textContent = title;
+  nav.append(a);
+
+  if (a.host === location.host && a.pathname === location.pathname) {
+    a.classList.add('current');
+  }
+
+  if (a.host != location.host) {
+    a.target = "_blank"
+  }
 }
 
-
-console.log("Nav Links:", navLinks);
-console.log("Current Link:", currentLink);
