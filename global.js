@@ -88,11 +88,46 @@ export async function fetchJSON(url) {
       }
 
       const data = await response.json();
-      console.log('It works?');
+      console.log('It works?', data);
+
       return data; 
 
 
   } catch (error) {
       console.error('Error fetching or parsing JSON data:', error);
   }
+}
+
+window.fetchJSON = fetchJSON;
+
+export function renderProjects(projects, containerElement, headingLevel = 'h2') {
+  // Ensure the container exists
+  if (!containerElement) {
+      console.error("Container element is not provided or does not exist.");
+      return;
+  }
+
+  // Clear existing content before rendering new items
+  containerElement.innerHTML = '';
+
+  // Iterate over each project in the array
+  projects.forEach(project => {
+      // Create an <article> element for each project
+      const article = document.createElement('article');
+
+      // Use default values if properties are missing
+      const title = project.title || "Untitled Project";
+      const image = project.image || "../images/default-image.jpg";
+      const description = project.description || "No description available.";
+
+      // Populate the <article> with project details dynamically
+      article.innerHTML = `
+          <${headingLevel}>${title}</${headingLevel}>
+          <img src="${image}" alt="${title}">
+          <p>${description}</p>
+      `;
+
+      // Append the article to the container
+      containerElement.appendChild(article);
+  });
 }
