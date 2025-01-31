@@ -1,4 +1,5 @@
-label.color-scheme {
+
+.color-scheme {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -55,7 +56,6 @@ form {
   gap: 1rem;
   margin: 0 auto;
 }
-
 
 label{
   display: contents;
