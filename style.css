@@ -95,3 +95,30 @@ h1, h3, h4, h5, h6 {
   line-height: 1.1;
   text-wrap: balance;
 }
+
+dl {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* four equal colums */
+  gap: 10px;
+  max-width: 600px;
+  margin: auto;
+}
+
+#profile-stats {
+  text-align: center;
+}
+
+dt {
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #6c757d; /* Grey text */
+  grid-row: 1; /* Forces it to the first row */
+}
+
+dd {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+  grid-row: 2; /* Forces it to the second row */
+}
