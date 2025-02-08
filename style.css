@@ -179,4 +179,20 @@ dd {
 
 path {
   transition: 300ms;
+  cursor: pointer;
+}
+
+.selected {
+  --color: oklch(60% 45% 0) !important;
+
+  &:is(path) {
+    fill: var(--color);
+  }
+
+  &:is(li) {
+    fill: var(--color);
+  }
+  path {
+    cursor: pointer;
+  }
 }

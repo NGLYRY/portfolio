@@ -107,7 +107,34 @@ function renderPieChart(projectsGiven) {
         .attr('class', 'block') // set the style attribute while passing in parameters
         .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`); // set the inner html of <li>
         })
+
+        let selectedIndex = -1;
+
+        let svg = d3.select('svg');
+        svg.selectAll('path').remove();
+        newArcs.forEach((arc, i) => {
+          svg
+            .append('path')
+            .attr('d', arc)
+            .attr('fill', colors(i))
+            .on('click', () => {
+              selectedIndex = selectedIndex === i ? -1 : i;
+              
+              svg
+                .selectAll('path')
+                .attr('class', (_, idx) => (
+                  idx === selectedIndex ? 'wedge selected' : 'wedge'
+                ))
+              d3.select('.legend')
+                .selectAll('li')
+                .attr('class', (_, idx) => (
+                  idx === selectedIndex ? 'selected' : ''
+                ));
+            });
+        });
+      
   }
+  
   
   // Call this function on page load
   renderPieChart(projects);
@@ -123,3 +150,11 @@ function renderPieChart(projectsGiven) {
     renderProjects(filteredProjects, projectsContainer, 'h2');
     renderPieChart(filteredProjects);
   });
+
+  
+  if (selectedIndex === -1) {
+    renderProjects(projects, projectsContainer, 'h2');
+  } else {
+    // TODO: filter projects and project them onto webpage
+    // Hint: `.label` might be useful
+  }
