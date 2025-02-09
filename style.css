@@ -188,11 +188,15 @@ path {
   &:is(path) {
     fill: var(--color);
   }
-
+/* 
   &:is(li) {
     fill: var(--color);
-  }
+  } */
   path {
     cursor: pointer;
   }
+}
+
+input, textarea {
+  margin-bottom: 20px;
 }
