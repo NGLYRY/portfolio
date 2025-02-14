@@ -200,3 +200,9 @@ path {
 input, textarea {
   margin-bottom: 20px;
 }
+
+g.gridlines {
+  stroke: #ccc;
+  stroke-width: 0.5;
+  opacity: 0.5;
+}
