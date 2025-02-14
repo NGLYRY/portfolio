@@ -201,8 +201,49 @@ input, textarea {
   margin-bottom: 20px;
 }
 
-g.gridlines {
+.gridlines {
   stroke: #ccc;
   stroke-width: 0.5;
   opacity: 0.5;
 }
+
+dl.info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25em 1em;
+  margin: 0;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 0.25em;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition-duration: 500ms;
+  transition-property: opacity, visibility;
+}
+
+/* Tooltip-specific styling (fixed positioning) */
+.tooltip {
+  position: fixed;
+  top: 1em;   /* default fallback if we never update position */
+  left: 1em;  /* default fallback */
+  z-index: 9999;
+}
+
+/* Hide it when [hidden] is set (unless hovered/focused) */
+dl.info[hidden]:not(:hover, :focus-within) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Smooth circle scaling on hover */
+circle {
+  transition: transform 200ms;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+circle:hover {
+  transform: scale(1.5);
+  cursor: pointer;
+}
+
