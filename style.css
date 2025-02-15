@@ -221,6 +221,14 @@ dl.info {
   transition-property: opacity, visibility;
 }
 
+@media (prefers-color-scheme: dark) {
+  dl.info {
+    background-color: rgba(34, 34, 34, 0.95); /* Darker background for dark mode */
+    border: 1px solid #444; /* Darker border for dark mode */
+    color: #ddd; /* Lighter text color for dark mode */
+  }
+}
+
 /* Tooltip-specific styling (fixed positioning) */
 .tooltip {
   position: fixed;

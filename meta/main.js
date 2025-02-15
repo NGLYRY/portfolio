@@ -230,13 +230,10 @@ async function createScatterplot() {
   }
 
   function brushSelector() {
-    const brush = d3.brush()
-      .extent([[0, 0], [width, height]])
-      .on('start brush end', brushed);
-
-    svg.append('g')
-      .attr('class', 'brush')
-      .call(brush);
+    const svg = document.querySelector('svg');
+    d3.select(svg).call(d3.brush());
+    d3.select(svg).selectAll('.dots, .overlay ~ *').raise();
+    d3.select(svg).call(d3.brush().on('start brush end', brushed));
   }
 
   function isCommitSelected(commit) {
@@ -265,7 +262,7 @@ async function createScatterplot() {
   
     return selectedCommits;
   }
-
+  
   function updateLanguageBreakdown() {
     const selectedCommits = brushSelection
       ? commits.filter(isCommitSelected)
