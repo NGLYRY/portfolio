@@ -157,6 +157,7 @@ async function createScatterplot() {
     .nice();
 
   const yScale = d3.scaleLinear().domain([0, 24]).range([usableArea.bottom, usableArea.top]);
+
   // Add gridlines BEFORE the axes
   const gridlines = svg
     .append('g')
@@ -165,6 +166,7 @@ async function createScatterplot() {
 
   // Create gridlines as an axis with no labels and full-width ticks
   gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
+
   // Create axes
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3
@@ -183,29 +185,124 @@ async function createScatterplot() {
     .attr('transform', `translate(${usableArea.left}, 0)`)
     .call(yAxis);
 
+  const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
+
+  const rScale = d3.scaleLinear().domain([minLines, maxLines]).range([2, 30]); // adjust these values based on your experimentation
+  
+  const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
+
   const dots = svg.append('g').attr('class', 'dots');
 
   dots
     .selectAll('circle')
-    .data(commits)
+    .data(sortedCommits)
     .join('circle')
     .attr('cx', (d) => xScale(d.datetime))
     .attr('cy', (d) => yScale(d.hourFrac))
-    .attr('r', 5)
+    .attr('r', (d) => rScale(d.totalLines))
     .attr('fill', 'steelblue')
-    .on('mouseenter', (event, commit) => {
+    .style('fill-opacity', 0.7)
+    .on('mouseenter', function (event, commit) {
+      d3.select(this).style('fill-opacity', 1);
       updateTooltipContent(commit);
       updateTooltipVisibility(true);
-      updateTooltipPosition(event)
+      updateTooltipPosition(event);
     })
     .on('mousemove', (event) => {
       // Update position on mouse move
       updateTooltipPosition(event);
     })
-    .on('mouseleave', () => {
+    .on('mouseleave', function () {
+      d3.select(event.currentTarget).style('fill-opacity', 0.7); // Restore transparency
+      //hide/clear tooltip
       updateTooltipContent({}); // Clear tooltip content
       updateTooltipVisibility(false);
-    });  
+    });
+
+  let brushSelection = null;
+
+  function brushed(event) {
+    console.log(event.selection);
+    brushSelection = event.selection;
+    updateSelection();
+    updateSelectionCount();
+    updateLanguageBreakdown();
+  }
+
+  function brushSelector() {
+    const brush = d3.brush()
+      .extent([[0, 0], [width, height]])
+      .on('start brush end', brushed);
+
+    svg.append('g')
+      .attr('class', 'brush')
+      .call(brush);
+  }
+
+  function isCommitSelected(commit) {
+    if (!brushSelection) return false;
+    const [[x0, y0], [x1, y1]] = brushSelection;
+    const x = xScale(commit.datetime);
+    const y = yScale(commit.hourFrac);
+    return x >= x0 && x <= x1 && y >= y0 && y <= y1;
+  }
+
+  function updateSelection() {
+    // Update visual state of dots based on selection
+    d3.selectAll('circle').classed('selected', (d) => isCommitSelected(d));
+
+  }
+
+  function updateSelectionCount() {
+    const selectedCommits = brushSelection
+      ? commits.filter(isCommitSelected)
+      : [];
+  
+    const countElement = document.getElementById('selection-count');
+    countElement.textContent = `${
+      selectedCommits.length || 'No'
+    } commits selected`;
+  
+    return selectedCommits;
+  }
+
+  function updateLanguageBreakdown() {
+    const selectedCommits = brushSelection
+      ? commits.filter(isCommitSelected)
+      : [];
+    const container = document.getElementById('language-breakdown');
+  
+    if (selectedCommits.length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+    const requiredCommits = selectedCommits.length ? selectedCommits : commits;
+    const lines = requiredCommits.flatMap((d) => d.lines);
+  
+    // Use d3.rollup to count lines per language
+    const breakdown = d3.rollup(
+      lines,
+      (v) => v.length,
+      (d) => d.type
+    );
+  
+    // Update DOM with breakdown
+    container.innerHTML = '';
+  
+    for (const [language, count] of breakdown) {
+      const proportion = count / lines.length;
+      const formatted = d3.format('.1~%')(proportion);
+  
+      container.innerHTML += `
+              <dt>${language}</dt>
+              <dd>${count} lines (${formatted})</dd>
+          `;
+    }
+  
+    return breakdown;
+  }
+
+  brushSelector();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
