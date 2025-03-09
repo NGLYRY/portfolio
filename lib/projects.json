@@ -1,5 +1,11 @@
 [
     {
+        "title": "Bike Watching",
+        "year": "2025",
+        "image": "../images/Screenshot_11.png",
+        "description": "An interactive visualization of bike sharing data over time in the City of Boston, Cambridge, and their surroundings. "
+    },
+    {
         "title": "This website... is my life.",
         "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
